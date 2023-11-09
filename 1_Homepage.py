@@ -41,9 +41,10 @@ with st.container():
 with st.container():
     left_column, middle_column, right_column = st.columns([0.2, 0.4, 0.4])
     with middle_column:
-        # If statement protects email sends if not all fields are filled or if email address is invalid
+        # If statement protects email sends if not all fields are filled
         if submitted and checkFields() == False:
             st.error("⚠ One or more fields are not filled out. Please try again.")
+        # Protects email sends (via regex) if email address is invalid
         elif submitted and not re.match("[^@]+@[^@]+\.[^@]+", email):
             st.error("⚠ Invalid email. Please try again.")
         elif submitted and checkFields() == True: 
