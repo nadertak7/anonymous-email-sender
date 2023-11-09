@@ -16,7 +16,7 @@ def checkFields():
     else: 
         return True
 
-# From functions/hidestreamlitstyle.py
+# From bespokefunctions/hidestreamlitstyle.py
 ps.stylePage()
 
 # Title
@@ -41,14 +41,16 @@ with st.container():
 with st.container():
     left_column, middle_column, right_column = st.columns([0.2, 0.4, 0.4])
     with middle_column:
-        # If statement protects email sends if not all fields are filled
+        # Protects email sends if not all fields are filled
         if submitted and checkFields() == False:
             st.error("⚠ One or more fields are not filled out. Please try again.")
         # Protects email sends (via regex) if email address is invalid
         elif submitted and not re.match("[^@]+@[^@]+\.[^@]+", email):
             st.error("⚠ Invalid email. Please try again.")
+        # Below block of code executes when all field rules are met
         elif submitted and checkFields() == True: 
             try:
+                # From bespokefunctions/sendmail.py
                 sm.sendMail(email, subject, message)
                 st.success("✅ Successfully Sent!") 
             except:
