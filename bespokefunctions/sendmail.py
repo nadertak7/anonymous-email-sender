@@ -17,12 +17,12 @@ def sendMail(email, subject, message):
     emailmessage.set_content(message)
 
     # Establish connection to mail server
-    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
-        # Encrypt
-        smtp.starttls()
-        # Login
-        smtp.login(SENDER_EMAIL_ID, SENDER_PASSWORD)
-        # Sends message
-        smtp.send_message(emailmessage)
-        # Quit
-        smtp.quit()
+    smtp = smtplib.SMTP('smtp.gmail.com', 587)
+    # Encrypt
+    smtp.starttls()
+    # Login
+    smtp.login(SENDER_EMAIL_ID, SENDER_PASSWORD)
+    # Sends message
+    smtp.send_message(emailmessage)
+    # Quit
+    smtp.quit()
