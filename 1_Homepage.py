@@ -11,6 +11,10 @@ from bespokefunctions import pagestyle as ps, sendmail as sm, db, checkfields as
 # From bespokefunctions/hidestreamlitstyle.py
 ps.stylePage()
 
+# Initialise session state variables
+if 'submitcount' not in st.session_state:
+    st.session_state["submitcount"] = 0
+
 # Title
 with st.container():
     left_column, middle_column, right_column = st.columns([0.2, 0.6, 0.4])
@@ -43,7 +47,25 @@ with st.container():
                 # From bespokefunctions/sendmail.py
                 sm.sendMail(email, subject, message)
                 # From bespokefunctions/db.py
-                db.send_to_db(email, subject, message)
+                db.sendToDb(email, subject, message)
+                # Adds 1 to count of emails sent in session. Without a session state this would reset to 0 with every submission
+                st.session_state["submitcount"] += 1
                 st.success("✅ Successfully Sent!") 
             except:
                 st.error("⚠ Something Went Wrong.")
+
+
+with st.container():
+    st.write("---")
+    st.markdown("### About this app")
+    left_column, middle_column, right_column = st.columns([0.4, 0.2, 0.4])
+    with left_column:
+        st.markdown("##### Current Session")
+        st.code(f"Emails Sent: {st.session_state["submitcount"]}")
+    with right_column:
+        st.markdown("##### Total usage statistics")
+        # Fetches values from db queries in bespokefunctions/db.py
+        send_count, last_message_sent = db.readFromDb()
+        # Shows query results in most readable format (converts from one-value dataframe)
+        st.code(f"Emails Sent: {int(send_count.values[0])}")
+        st.code(f"Last Message Sent: {str(last_message_sent.values[0])[2:-2]}")
