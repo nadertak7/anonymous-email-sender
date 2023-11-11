@@ -32,7 +32,7 @@ with st.container():
     with middle_column: 
         with st.form("Email Form", clear_on_submit = False):
             email = st.text_input("Their Email Address:", placeholder="Email Address", max_chars = 320)
-            subject = st.text_input("Your Subject:", placeholder = "Subject", max_chars = 100)
+            subject = st.text_input("Your Subject:", placeholder = "Subject", max_chars = 70)
             message = st.text_area("Your Message:", placeholder = "Message", max_chars = 3000)
             with st.container():
                 left_column, middle_column, right_column = st.columns([0.4, 0.2, 0.4])
