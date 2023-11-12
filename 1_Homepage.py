@@ -1,7 +1,6 @@
 # Import Modules
 import streamlit as st
 import re 
-from datetime import datetime 
 
 # Set config
 st.set_page_config(page_title = "Email Sender", page_icon = "closed-mailbox-with-raised-flag", layout = "wide")
@@ -66,7 +65,9 @@ with st.container():
     with right_column:
         st.markdown("##### Total usage statistics (Global)")
         # Fetches values from db queries in bespokefunctions/db.py
-        send_count, last_message_sent = db.readFromDb()
-        # Shows query results in most readable format (converts from one-value dataframe)
-        st.code(f"Emails Sent: {int(send_count.values[0])}")
-        st.code(f"Last Message Sent: {str(last_message_sent.values[0])[2:-2]}")
+        send_count, last_message_sent, avg_subject_length, avg_message_length = db.readFromDb()
+        # Shows query results (Post-processed in bespokefunctions/db.py)
+        st.code(f"Emails Sent: {send_count}")
+        st.code(f"Last Message Sent: {last_message_sent}")
+        st.code(f"Average Subject Length (Characters): {avg_subject_length}")
+        st.code(f"Avg Message Length (Characters): {avg_message_length}")

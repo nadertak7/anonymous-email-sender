@@ -39,7 +39,7 @@ def sendToDb(email, subject, message):
         session.commit()
 
 def readFromDb():
-    # Queries database 
+    # Database queries 
     send_count = conn.query(''' 
                             SELECT      COUNT(*)
                             FROM        email_sent_log 
@@ -48,5 +48,17 @@ def readFromDb():
                                     SELECT      DATE_FORMAT(MAX(created_at), '%Y-%m-%d %T')
                                     FROM        email_sent_log
                                    ''', ttl = 0)
-    # Tuple to be unpacked as variables in homepage
-    return send_count, last_message_sent
+    avg_char_lengths = conn.query('''
+                                SELECT 		AVG(CHAR_LENGTH(email_contents)) message_char_length,
+                                            AVG(CHAR_LENGTH(email_subject))subject_char_length
+                                FROM		email_sent_log 
+                                ''')
+    
+    # Post-Process Query Results
+    send_count = int(send_count.values[0])
+    last_message_sent = str(last_message_sent.values[0])[2:-2]
+    avg_subject_length = avg_char_lengths.iloc[0]["subject_char_length"].round(2)
+    avg_message_length = avg_char_lengths.iloc[0]["message_char_length"].round(2)
+
+    # Pack variables into tuple, to be unpacked in homepage
+    return send_count, last_message_sent, avg_subject_length, avg_message_length
