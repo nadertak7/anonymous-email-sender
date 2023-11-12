@@ -61,4 +61,8 @@ def readFromDb():
     avg_message_length = avg_char_lengths.iloc[0]["message_char_length"].round(2)
 
     # Pack variables into tuple, to be unpacked in homepage
-    return send_count, last_message_sent, avg_subject_length, avg_message_length
+    return (send_count, 
+            last_message_sent, 
+            avg_subject_length, 
+            avg_message_length
+            )
