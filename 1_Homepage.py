@@ -1,6 +1,7 @@
 # Import Modules
 import streamlit as st
 import re 
+from datetime import datetime 
 
 # Set config
 st.set_page_config(page_title = "Email Sender", page_icon = "closed-mailbox-with-raised-flag", layout = "wide")
@@ -12,8 +13,8 @@ from bespokefunctions import pagestyle as ps, sendmail as sm, db, checkfields as
 ps.stylePage()
 
 # Initialise session state variables
-if 'submitcount' not in st.session_state:
-    st.session_state["submitcount"] = 0
+if 'submit_count_session' not in st.session_state:
+    st.session_state["submit_count_session"] = 0
 
 # Title
 with st.container():
@@ -37,10 +38,10 @@ with st.container():
     with middle_column:
         # Protects email sends if not all fields are filled
         if submitted and cf.checkFields(email, subject, message) == False:
-            st.error("⚠ One or more fields are not filled out. Please try again.")
+            st.error("🛑 One or more fields are not filled out. Please try again.")
         # Protects email sends (via regex) if email address is invalid
         elif submitted and not re.match("[^@]+@[^@]+\.[^@]+", email):
-            st.error("⚠ Invalid email. Please try again.")
+            st.error("🛑 Invalid email. Please try again.")
         # Below block of code executes when all field rules are met
         elif submitted and cf.checkFields(email, subject, message) == True: 
             try:
@@ -49,10 +50,10 @@ with st.container():
                 # From bespokefunctions/db.py
                 db.sendToDb(email, subject, message)
                 # Adds 1 to count of emails sent in session. Without a session state this would reset to 0 with every submission
-                st.session_state["submitcount"] += 1
+                st.session_state["submit_count_session"] += 1
                 st.success("✅ Successfully Sent!") 
             except:
-                st.error("⚠ Something Went Wrong.")
+                st.error("🛑 Something Went Wrong.")
 
 
 with st.container():
@@ -61,9 +62,9 @@ with st.container():
     left_column, middle_column, right_column = st.columns([0.4, 0.2, 0.4])
     with left_column:
         st.markdown("##### Current Session")
-        st.code(f"Emails Sent: {st.session_state["submitcount"]}")
+        st.code(f"Emails Sent: {st.session_state["submit_count_session"]}")
     with right_column:
-        st.markdown("##### Total usage statistics")
+        st.markdown("##### Total usage statistics (Global)")
         # Fetches values from db queries in bespokefunctions/db.py
         send_count, last_message_sent = db.readFromDb()
         # Shows query results in most readable format (converts from one-value dataframe)

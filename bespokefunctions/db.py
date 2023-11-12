@@ -39,12 +39,14 @@ def sendToDb(email, subject, message):
         session.commit()
 
 def readFromDb():
+    # Queries database 
     send_count = conn.query(''' 
                             SELECT      COUNT(*)
                             FROM        email_sent_log 
-                            ''')
+                            ''', ttl = 0)
     last_message_sent = conn.query('''
                                     SELECT      DATE_FORMAT(MAX(created_at), '%Y-%m-%d %T')
                                     FROM        email_sent_log
-                                   ''')
+                                   ''', ttl = 0)
+    # Tuple to be unpacked as variables in homepage
     return send_count, last_message_sent
