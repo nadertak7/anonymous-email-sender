@@ -29,11 +29,11 @@ def calculateSessionStateVars(subject, message, submitted_timestamp, uploaded_fi
     st.session_state["last_submitted_timestamp"] = submitted_timestamp
     
     # Calculates average subject character length
-    st.session_state["total_subject_char_len_session"] += len(subject)
+    st.session_state["total_subject_char_len_session"] += len(subject.strip())
     st.session_state["avg_subject_char_len_session"] = round((st.session_state["total_subject_char_len_session"] / st.session_state["submit_count_session"]), 2)
     
     # Calculates average message character length
-    st.session_state["total_message_char_len_session"] += len(message)
+    st.session_state["total_message_char_len_session"] += len(message.strip())
     st.session_state["avg_message_char_len_session"] = round((st.session_state["total_message_char_len_session"] / st.session_state["submit_count_session"]), 2)
     
     if len(uploaded_file) != 0:

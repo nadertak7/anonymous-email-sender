@@ -89,8 +89,8 @@ def readFromDb():
                             FROM        email_sent_log 
                             ''', ttl = 0)
     avg_char_lengths = conn.query('''
-                                SELECT 		COALESCE(AVG(CHAR_LENGTH(email_message)), 0) message_char_length,
-                                            COALESCE(AVG(CHAR_LENGTH(email_subject)), 0) subject_char_length
+                                SELECT 		COALESCE(AVG(CHAR_LENGTH(TRIM(email_message))), 0) message_char_length,
+                                            COALESCE(AVG(CHAR_LENGTH(TRIM(email_subject))), 0) subject_char_length
                                 FROM		email_contents
                                 ''', ttl = 0)
     attachment_info = conn.query('''
