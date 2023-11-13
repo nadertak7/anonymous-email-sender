@@ -34,9 +34,10 @@ with st.container():
     left_column, middle_column, right_column = st.columns([0.2, 0.7, 0.1])
     with middle_column: 
         with st.form("Email Form", clear_on_submit = False):
-            email = st.text_input("Their Email Address:", placeholder="Email Address", max_chars = 320)
-            subject = st.text_input("Your Subject:", placeholder = "Subject", max_chars = 70)
-            message = st.text_area("Your Message:", placeholder = "Message", max_chars = 3000)
+            email = st.text_input("Their Email Address: *", placeholder="Email Address", max_chars = 320)
+            subject = st.text_input("Your Subject: *", placeholder = "Subject", max_chars = 70)
+            message = st.text_area("Your Message: *", placeholder = "Message", max_chars = 3000)
+            uploaded_file = st.file_uploader("Attach a File", accept_multiple_files=True)
             submitted = st.form_submit_button("Send")
 
 # Below code is executed upon submission
@@ -59,7 +60,7 @@ with st.container():
         elif submitted and cf.checkFields(email, subject, message) == True: 
             try:
                 # From bespokefunctions/sendmail.py
-                sm.sendMail(email, subject, message)
+                sm.sendMail(email, subject, message, uploaded_file)
                 # From bespokefunctions/db.py
                 db.sendToDb(email, subject, message) 
                 # Triggers function ssc.calculateSessionStateVars below

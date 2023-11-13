@@ -29,7 +29,7 @@ def sendToDb(email, subject, message):
                                     :message)
                                     ''')
 
-    # Values inputted in said query
+    # Values inputted in queries above
     email_sent_log_values = {
         'sender_email_id': SENDER_EMAIL_ID,
         'email': email,
