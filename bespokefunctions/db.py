@@ -40,39 +40,39 @@ def sendToDb(email, subject, message, uploaded_file = None):
                                     :attachment_size)
                                     ''')
 
-    # Values inputted in queries above
-    email_sent_log_values = {
-        'sender_email_id': SENDER_EMAIL_ID,
-        'email': email,
-        'created_at': datetime.now()
-    }
-
-    email_contents_values = {
-        'log_id': None,
-        'subject': subject,
-        'message': message
-    }
-
     
     # Streamlit's way of performing queries that write to a database
     with conn.session as session:
-        # Executes email_sent_log insert
+        # Executes email_sent_log insert with values 
+        email_sent_log_values = {
+            'sender_email_id': SENDER_EMAIL_ID,
+            'email': email,
+            'created_at': datetime.now()
+    }
+
         email_sent_log_execution = session.execute(email_sent_log_query, email_sent_log_values)
        
-        # Populates email_contents.email_log_id FK 
+        # Initialises email_sent_log ID FK
         log_id = email_sent_log_execution.lastrowid
-        email_contents_values["log_id"] = log_id
 
-        # Executes email_contents insert 
+        # Executes email_contents insert with values 
+        email_contents_values = {
+            'log_id': None,
+            'subject': subject,
+            'message': message
+            }
+        email_contents_values["log_id"] = log_id
+        
         session.execute(email_contents_query, email_contents_values)
 
-        # Executes email_attachments insert
+        # Executes email_attachments insert with values
         for file in uploaded_file:
             email_attachments_values = {
                 'log_id': None, 
                 'attachment_name': file.name,
                 'mime_type': file.type,
-                'attachment_size': file.size }
+                'attachment_size': file.size 
+                }
             
             email_attachments_values["log_id"] = log_id 
             
