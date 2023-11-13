@@ -2,27 +2,23 @@ import streamlit as st
 
 # Initialise session state variables
 def initialiseSessionStates():
-    if 'submit_count_session' not in st.session_state:
-        st.session_state["submit_count_session"] = 0
-    if 'total_subject_char_len_session' not in st.session_state:
-        st.session_state["total_subject_char_len_session"] = 0
-    if 'avg_subject_char_len_session' not in st.session_state:
-        st.session_state["avg_subject_char_len_session"] = 0
-    if 'total_message_char_len_session' not in st.session_state:
-        st.session_state["total_message_char_len_session"] = 0
-    if 'avg_message_char_len_session' not in st.session_state:
-        st.session_state["avg_message_char_len_session"] = 0
-    if 'last_submitted_timestamp' not in st.session_state:
-        st.session_state["last_submitted_timestamp"] = None
-    if 'attachment_list_session' not in st.session_state:
-        st.session_state["attachment_list_session"] = []
-    if 'attachment_count_session' not in st.session_state:
-        st.session_state["attachment_count_session"] = 0
-    if 'total_attachment_size_mb_session' not in st.session_state:
-        st.session_state["total_attachment_size_mb_session"] = 0
-    if 'avg_attachment_size_mb_session' not in st.session_state:
-        st.session_state["avg_attachment_size_mb_session"] = 0
+    default_session_state = {
+        "submit_count_session": 0,
+        "total_subject_char_len_session": 0,
+        "avg_subject_char_len_session": 0,
+        "total_message_char_len_session": 0,
+        "avg_message_char_len_session": 0,
+        "last_submitted_timestamp": None,
+        "attachment_list_session": [],
+        "attachment_count_session": 0,
+        "total_attachment_size_mb_session": 0,
+        "avg_attachment_size_mb_session": 0,
+    }
 
+    for key, default_value in default_session_state.items():
+        if key not in st.session_state:
+            st.session_state[key] = default_value
+    
 def calculateSessionStateVars(subject, message, submitted_timestamp, uploaded_file = None):
     # Without a session state these variables would reset to 0 with every submission
     
