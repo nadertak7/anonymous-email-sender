@@ -62,7 +62,7 @@ with st.container():
                 # From bespokefunctions/sendmail.py
                 sm.sendMail(email, subject, message, uploaded_file)
                 # From bespokefunctions/db.py
-                db.sendToDb(email, subject, message) 
+                db.sendToDb(email, subject, message, uploaded_file) 
                 # Triggers function ssc.calculateSessionStateVars below
                 emailsent = True
                 # Lets user know if code operations are successful or not
