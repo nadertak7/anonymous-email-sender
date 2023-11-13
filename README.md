@@ -35,15 +35,19 @@ To run the app locally:
    ```env
    SENDER_EMAIL_ID=your_email@gmail.com
    SENDER_PASSWORD=your_email_password
+
+5. Set up schema
+
+  After setting up a database connection, add the credentials into your [local app secrets](https://docs.streamlit.io/knowledge-base/tutorials/databases/mysql) and create the tables in [schema.sql](/schema.sql).
    ```
 
-5. Run app:
+6. Run app:
 
    ```console
    streamlit run 1_Homepage.py
    ```
 
-6. Access the app in your browser at [http://localhost:8501](http://localhost:8501) (8501 is streamlit's default port).
+7. Access the app in your browser at [http://localhost:8501](http://localhost:8501) (8501 is streamlit's default port).
 
 ---
 
