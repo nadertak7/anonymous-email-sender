@@ -82,31 +82,36 @@ def sendToDb(email, subject, message, uploaded_file = None):
         session.commit()
 
 def readFromDb():
-    # Database queries 
-    send_count = conn.query(''' 
-                            SELECT      COUNT(*)
+    # Database queries. Caching is disabled as queries are not costly. 
+    send_info = conn.query(''' 
+                            SELECT      COUNT(*) send_count,
+                                        COALESCE(DATE_FORMAT(MAX(created_at), '%Y-%m-%d %T'), "None") last_message_sent
                             FROM        email_sent_log 
                             ''', ttl = 0)
-    last_message_sent = conn.query('''
-                                    SELECT      DATE_FORMAT(MAX(created_at), '%Y-%m-%d %T')
-                                    FROM        email_sent_log
-                                   ''', ttl = 0)
     avg_char_lengths = conn.query('''
-                                SELECT 		AVG(CHAR_LENGTH(email_message)) message_char_length,
-                                            AVG(CHAR_LENGTH(email_subject))subject_char_length
+                                SELECT 		COALESCE(AVG(CHAR_LENGTH(email_message)), 0) message_char_length,
+                                            COALESCE(AVG(CHAR_LENGTH(email_subject)), 0) subject_char_length
                                 FROM		email_contents
-                                ''')
+                                ''', ttl = 0)
+    attachment_info = conn.query('''
+                                SELECT		COUNT(*) attachment_count,
+                                            COALESCE(AVG(attachment_size_bytes), 0) avg_attachment_size
+                                FROM		email_attachments
+                                  ''', ttl = 0)
     
     # Post-Process Query Results
-    send_count = int(send_count.values[0])
-    last_message_sent = str(last_message_sent.values[0])[2:-2]
-    # ([variable] or 0) returns first truthy value
-    avg_subject_length = round((avg_char_lengths.iloc[0]["subject_char_length"] or 0), 2) 
-    avg_message_length = round((avg_char_lengths.iloc[0]["message_char_length"] or 0), 2)
+    send_count = send_info.iloc[0]["send_count"]
+    last_message_sent = str(send_info.iloc[0]["last_message_sent"])
+    attachment_count = round((attachment_info.iloc[0]["attachment_count"]), 2)
+    avg_attachment_size_mb = round(attachment_info.iloc[0]["avg_attachment_size"] / 1024 ** 2, 2)
+    avg_subject_length = round((avg_char_lengths.iloc[0]["subject_char_length"]), 2) 
+    avg_message_length = round((avg_char_lengths.iloc[0]["message_char_length"]), 2)
 
     # Pack variables into tuple, to be unpacked in homepage
     return (send_count, 
             last_message_sent, 
+            attachment_count,
+            avg_attachment_size_mb,
             avg_subject_length, 
             avg_message_length
             )

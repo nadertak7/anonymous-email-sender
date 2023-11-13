@@ -45,7 +45,8 @@ with st.container():
 # Collects submitted timestamp for metrics
 if submitted: 
     submitted_timestamp = (datetime .now()
-                                    .strftime("%Y-%m-%d %H:%M:%S"))
+                                    .strftime("%Y-%m-%d %H:%M:%S")
+                            )
 
 with st.container():
     left_column, middle_column, right_column = st.columns([0.2, 0.4, 0.4])
@@ -88,9 +89,17 @@ with st.container():
     with right_column:
         st.markdown("##### Total usage statistics (Global)")
         # Fetches values from db queries in bespokefunctions/db.py
-        send_count, last_message_sent, avg_subject_length, avg_message_length = db.readFromDb()
+        (send_count, 
+         last_message_sent, 
+         attachment_count, 
+         avg_attachment_size_mb,
+         avg_subject_length, 
+         avg_message_length
+            ) = db.readFromDb()
         # Shows query results (Post-processed in bespokefunctions/db.py)
         st.code(f"Emails Sent: {send_count}")
         st.code(f"Last Message Sent: {last_message_sent}")
         st.code(f"Average Subject Length (Characters): {avg_subject_length}")
         st.code(f"Avg Message Length (Characters): {avg_message_length}")
+        st.code(f"Attachments Sent: {attachment_count}")
+        st.code(f"Average Attachment Size: {avg_attachment_size_mb} MB")
