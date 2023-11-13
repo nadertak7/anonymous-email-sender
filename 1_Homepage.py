@@ -80,12 +80,14 @@ with st.container():
         st.markdown("##### Current Session")
         # Fetches values from session state calculations in bespokefuncitons/sessionstatecalcs.py
         if emailsent: 
-            ssc.calculateSessionStateVars(subject, message, submitted_timestamp)
+            ssc.calculateSessionStateVars(subject, message, submitted_timestamp, uploaded_file)
         # Shows session state variable values 
         st.code(f"Emails Sent: {st.session_state["submit_count_session"]}")
         st.code(f"Last Successful Submission: {st.session_state["last_submitted_timestamp"]}")
         st.code(f"Average Subject Length (Characters): {st.session_state["avg_subject_char_len_session"]}")
         st.code(f"Average Message Length (Characters): {st.session_state["avg_message_char_len_session"]}")
+        st.code(f"Attachments Sent: {st.session_state["attachment_count_session"]}")
+        st.code(f"Average Attachment Size: {st.session_state["avg_attachment_size_mb_session"]} MB")
     with right_column:
         st.markdown("##### Total usage statistics (Global)")
         # Fetches values from db queries in bespokefunctions/db.py
