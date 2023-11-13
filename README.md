@@ -57,13 +57,13 @@ The form consists of four fields: `Email`, `Subject`, `Message` and `Attachments
 
 #### `2. Checking fields`
 
-Once the form is submitted, the app firstly verifies whether (a) all fields have been filled out via the [`checkfields.py`](bespokefunctions/checkfields.py) module, and also determines whether the email address is valid with regex. 
+Once the form is submitted, the app firstly verifies whether (a) all fields have been filled out via the [`checkfields.py`](bespokefunctions/checkfields.py) module, and (b) determines whether the email address is valid with regex. 
 
 #### `3. Sending the email`
 
 If the form submissions pass these aforementioned checks, contents of the email are sent to the [`sendmail.py`](bespokefunctions/sendmail.py) file. Attributes of the email are put into a dictionary via the [`email package`](https://python.readthedocs.io/fr/latest/library/email.message.html) and fired out to the email's recipient with smtplib. For security, we use port `587` with `starttls()`.
 
-#### `4. Inserting values to database`
+#### `3. Inserting values to database`
 
 The contents of the form submission are also sent to the [`db.py`](bespokefunctions/db.py) file, which gets email-related arguments and inserts those into the required schema table. Using `sqlalchemy`, the values and insert queries have been separated to prevent SQL injection. 
 
@@ -89,8 +89,3 @@ To minimise query costs, the queries have been bundled as much as possible, and 
 ### `6. Retrieving session data`
 
 Corresponding exactly to the list above, the app also collects the same metrics as the global usage ones but for the session itself (i.e. metrics that reset when the app is refreshed). This utilises streamlit's session state variables, all of which can be found in [`sessionstatecalcs.py`](bespokefunctions/sessionstatecalcs.py). Session state variables are used because streamlit reruns the page with most interactions, which would reset most normal variables. Unlike the global usage metrics, these calculations are performed in python and not MySQL. 
-
-
-
-
-
