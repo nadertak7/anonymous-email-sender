@@ -13,7 +13,7 @@ To run the app locally:
 1. Clone the repo:
 
    ```console
-   git clone https://github.com/your-username/anonymous-email-sender.git
+   git clone https://github.com/nadertak7/anonymous-email-sender.git
    ```
 
 2. Navigate to project directory:
@@ -49,21 +49,29 @@ To run the app locally:
 
 ## App breakdown
 
-[1_Homepage.py](/1_Homepage.py] Is the only page displayed to the user in the entire app. It consists of a title, form, and usage metrics. 
+[`1_Homepage.py`](/1_Homepage.py) Is the only page displayed to the user in the entire app. It consists of a title, form, and usage metrics. 
+
+
 
 #### `1. The form`
 
 The form consists of four fields: `Email`, `Subject`, `Message` and `Attachments`. Out of the four fields, only `Attachments` is not mandatory. If attachments is empty it returns an empty list and should not change anything in the rest of the app. 
 
+
+
 #### `2. Checking fields`
 
 Once the form is submitted, the app firstly verifies whether (a) all fields have been filled out via the [`checkfields.py`](bespokefunctions/checkfields.py) module, and (b) determines whether the email address is valid with regex. 
+
+
 
 #### `3. Sending the email`
 
 If the form submissions pass these aforementioned checks, contents of the email are sent to the [`sendmail.py`](bespokefunctions/sendmail.py) file. Attributes of the email are put into a dictionary via the [`email package`](https://python.readthedocs.io/fr/latest/library/email.message.html) and fired out to the email's recipient with smtplib. For security, we use port `587` with `starttls()`.
 
-#### `3. Inserting values to database`
+
+
+#### `4. Inserting values to database`
 
 The contents of the form submission are also sent to the [`db.py`](bespokefunctions/db.py) file, which gets email-related arguments and inserts those into the required schema table. Using `sqlalchemy`, the values and insert queries have been separated to prevent SQL injection. 
 
@@ -73,7 +81,9 @@ Currently there are three tables which gives us a relational database.
 - `email_contents`: `id` (PK), `email_sent_log_id` (FK), `email_subject`, `email_message`
 - `email_attachments`: `id` (PK), `email_sent_log_id` (FK), `email_attachment_name`, `mime_type`, `attachment_size_bytes`
 
-### `5. Retrieving values in database`
+
+
+#### `5. Retrieving values in database`
 
 At the bottom right-hand size of the homepage, we also display app usage metrics, which gets counts, averages and character lengths from queries that read the database. These are also stored in [`db.py`](bespokefunctions/db.py) It displays: 
 
@@ -86,6 +96,11 @@ At the bottom right-hand size of the homepage, we also display app usage metrics
 
 To minimise query costs, the queries have been bundled as much as possible, and then the dataframes they returned are unpacked using python. Also, to prevent any strange looking data appearing where tables have been truncated, the MySQL `COALESCE` function has been used where needed. 
 
-### `6. Retrieving session data`
+
+
+#### `6. Retrieving session data`
 
 Corresponding exactly to the list above, the app also collects the same metrics as the global usage ones but for the session itself (i.e. metrics that reset when the app is refreshed). This utilises streamlit's session state variables, all of which can be found in [`sessionstatecalcs.py`](bespokefunctions/sessionstatecalcs.py). Session state variables are used because streamlit reruns the page with most interactions, which would reset most normal variables. Unlike the global usage metrics, these calculations are performed in python and not MySQL. 
+
+
+App will be hosted soon!
