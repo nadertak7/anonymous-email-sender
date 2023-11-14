@@ -10,12 +10,12 @@ conn = st.connection('mysql', type='sql')
 SENDER_EMAIL_ID = str(os.environ.get('SENDER_EMAIL_ID'))
 
 def sendToDb(email, 
-            subject, 
-            message,  
-            filter_profanity, 
-            subject_contains_profanity, 
-            message_contains_profanity,
-            uploaded_file = None):
+             subject, 
+             message,  
+             filter_profanity, 
+             subject_contains_profanity, 
+             message_contains_profanity,
+             uploaded_file = None):
     # Queries that are executed when submit button is pressed
     email_sent_log_query = text(   '''
                     INSERT INTO     email_sent_log( email_sender, 
@@ -67,7 +67,8 @@ def sendToDb(email,
             'created_at': datetime.now()
     }
 
-        email_sent_log_execution = session.execute(email_sent_log_query, email_sent_log_values)
+        email_sent_log_execution = session.execute(email_sent_log_query, 
+                                                   email_sent_log_values)
        
         # Initialises email_sent_log ID FK
         log_id = email_sent_log_execution.lastrowid
@@ -79,7 +80,8 @@ def sendToDb(email,
             'message': message
             }
         
-        session.execute(email_contents_query, email_contents_values)
+        session.execute(email_contents_query, 
+                        email_contents_values)
 
         # Executes email_attachments insert with values
         for file in uploaded_file:
@@ -90,7 +92,8 @@ def sendToDb(email,
                 'attachment_size': file.size 
                 }
             
-            session.execute(email_attachments_query, email_attachments_values)
+            session.execute(email_attachments_query, 
+                            email_attachments_values)
 
         # Executes email_profanity insert with values
         email_profanity_values = {
@@ -100,7 +103,8 @@ def sendToDb(email,
             'message_contains_profanity': message_contains_profanity
         }
 
-        session.execute(email_profanity_query, email_profanity_values)
+        session.execute(email_profanity_query, 
+                        email_profanity_values)
 
         # Commit
         session.commit()
@@ -124,7 +128,7 @@ def readFromDb():
                                   ''', ttl = 0)
     
     # The below query be a lot more simpler and readable. But wanted to show some SQL skills! 
-    # COALESCE is also a lot faster than IFNULL in a lot of cases, but benchmarking showed the same query cost in this case 
+    # COALESCE is also faster than IFNULL in a lot of cases, but benchmarking showed the same query cost in this case 
     emails_censored_count = conn.query('''
                                 SELECT 		COUNT(	IF(	    filter_profanity_selected = 1
                                                     AND(	COALESCE(	IF(subject_contains_profanity = 1, 1, NULL),

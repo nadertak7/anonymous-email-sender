@@ -1,7 +1,9 @@
 # Import Modules
 from better_profanity import profanity
 
-def filterProfanity(subject, message, filter_profanity):
+def filterProfanity(subject, 
+                    message, 
+                    filter_profanity):
 
     subject_contains_profanity = profanity.contains_profanity(subject)
     message_contains_profanity = profanity.contains_profanity(message)
