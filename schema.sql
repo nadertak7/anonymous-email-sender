@@ -12,8 +12,8 @@ CREATE TABLE `email_contents` (
   `email_subject` varchar(255) DEFAULT NULL,
   `email_message` text,
   PRIMARY KEY (`id`),
-  KEY `fk_email_sent_log` (`email_sent_log_id`),
-  CONSTRAINT `email_contents_ibfk_1` FOREIGN KEY (`email_sent_log_id`) REFERENCES `email_sent_log` (`id`)
+  KEY `fk_email_sent_log_contents` (`email_sent_log_id`),
+  CONSTRAINT `fk_email_sent_log_contents` FOREIGN KEY (`email_sent_log_id`) REFERENCES `email_sent_log` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `email_attachments` (
@@ -23,8 +23,8 @@ CREATE TABLE `email_attachments` (
   `mime_type` varchar(255) DEFAULT NULL,
   `attachment_size_bytes` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_email_sent_log_id` (`email_sent_log_id`),
-  CONSTRAINT `fk_email_sent_log_id` FOREIGN KEY (`email_sent_log_id`) REFERENCES `email_sent_log` (`id`)
+  KEY `fk_email_sent_log_attachments` (`email_sent_log_id`),
+  CONSTRAINT `fk_email_sent_log_attachments` FOREIGN KEY (`email_sent_log_id`) REFERENCES `email_sent_log` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `email_profanity` (
@@ -34,6 +34,6 @@ CREATE TABLE `email_profanity` (
   `subject_contains_profanity` tinyint(1) DEFAULT NULL,
   `message_contains_profanity` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `ibfk2_email_sent_log_id` (`email_sent_log_id`),
-  CONSTRAINT `ibfk2_email_sent_log_id` FOREIGN KEY (`email_sent_log_id`) REFERENCES `email_sent_log` (`id`)
+  KEY `fk_email_sent_log_profanity` (`email_sent_log_id`),
+  CONSTRAINT `fk_email_sent_log_profanity` FOREIGN KEY (`email_sent_log_id`) REFERENCES `email_sent_log` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
