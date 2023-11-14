@@ -98,7 +98,13 @@ with st.container():
         st.markdown("##### Current Session")
         # Fetches values from session state calculations in bespokefuncitons/sessionstatecalcs.py
         if emailsent: 
-            ssc.calculateSessionStateVars(subject, message, submitted_timestamp, uploaded_file)
+            ssc.calculateSessionStateVars(subject, 
+                                          message, 
+                                          submitted_timestamp, 
+                                          filter_profanity, 
+                                          subject_contains_profanity, 
+                                          message_contains_profanity, 
+                                          uploaded_file)
         # Shows session state variable values 
         st.code(f"Emails Sent: {st.session_state["submit_count_session"]}")
         st.code(f"Last Successful Submission: {st.session_state["last_submitted_timestamp"]}")
@@ -106,6 +112,7 @@ with st.container():
         st.code(f"Average Message Length (Characters): {st.session_state["avg_message_char_len_session"]}")
         st.code(f"Attachments Sent: {st.session_state["attachment_count_session"]}")
         st.code(f"Average Attachment Size: {st.session_state["avg_attachment_size_mb_session"]} MB")
+        st.code(f"Profane Emails Censored: {st.session_state["emails_censored_count"]}")
     with right_column:
         st.markdown("##### Total usage statistics (Global)")
         # Fetches values from db queries in bespokefunctions/db.py
@@ -114,7 +121,8 @@ with st.container():
          attachment_count, 
          avg_attachment_size_mb,
          avg_subject_length, 
-         avg_message_length
+         avg_message_length,
+         emails_censored_count
             ) = db.readFromDb()
         # Shows query results (Post-processed in bespokefunctions/db.py)
         st.code(f"Emails Sent: {send_count}")
@@ -123,3 +131,4 @@ with st.container():
         st.code(f"Avg Message Length (Characters): {avg_message_length}")
         st.code(f"Attachments Sent: {attachment_count}")
         st.code(f"Average Attachment Size: {avg_attachment_size_mb} MB")
+        st.code(f"Profane Emails Censored: {emails_censored_count}")

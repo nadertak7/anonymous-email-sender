@@ -13,13 +13,20 @@ def initialiseSessionStates():
         "attachment_count_session": 0,
         "total_attachment_size_mb_session": 0,
         "avg_attachment_size_mb_session": 0,
+        "emails_censored_count": 0,
     }
 
     for key, default_value in default_session_state.items():
         if key not in st.session_state:
             st.session_state[key] = default_value
     
-def calculateSessionStateVars(subject, message, submitted_timestamp, uploaded_file = None):
+def calculateSessionStateVars(subject, 
+                              message, 
+                              submitted_timestamp, 
+                              filter_profanity, 
+                              subject_contains_profanity, 
+                              message_contains_profanity, 
+                              uploaded_file = None):
     # Without a session state these variables would reset to 0 with every submission
     
     # Adds 1 to count of emails sent in session. 
@@ -45,11 +52,15 @@ def calculateSessionStateVars(subject, message, submitted_timestamp, uploaded_fi
         st.session_state["total_attachment_size_mb_session"] += sum([file.size for file in uploaded_file]) / 1024 ** 2
         st.session_state["avg_attachment_size_mb_session"] = round(st.session_state["total_attachment_size_mb_session"] / st.session_state["attachment_count_session"], 2)
 
+    # Calculates number of emails censored 
+    if filter_profanity and (subject_contains_profanity or message_contains_profanity):
+        st.session_state["emails_censored_count"] += 1
+
     # Packs session states into tuple to be unpacked in homepage
     return(st.session_state["submit_count_session"], 
            st.session_state["last_submitted_timestamp"],
            st.session_state["avg_subject_char_len_session"],
            st.session_state["avg_message_char_len_session"],
            st.session_state["attachment_count_session"],
-           st.session_state["avg_attachment_size_mb_session"]
-           )
+           st.session_state["avg_attachment_size_mb_session"],
+           st.session_state["emails_censored_count"])
