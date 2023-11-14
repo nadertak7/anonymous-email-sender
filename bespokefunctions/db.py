@@ -9,7 +9,13 @@ conn = st.connection('mysql', type='sql')
 # Define constants
 SENDER_EMAIL_ID = str(os.environ.get('SENDER_EMAIL_ID'))
 
-def sendToDb(email, subject, message, uploaded_file = None):
+def sendToDb(email, 
+            subject, 
+            message,  
+            filter_profanity, 
+            subject_contains_profanity, 
+            message_contains_profanity,
+            uploaded_file = None):
     # Queries that are executed when submit button is pressed
     email_sent_log_query = text(   '''
                     INSERT INTO     email_sent_log( email_sender, 
@@ -39,10 +45,21 @@ def sendToDb(email, subject, message, uploaded_file = None):
                                     :mime_type,
                                     :attachment_size)
                                     ''')
-
+    
+    email_profanity_query = text('''
+                    INSERT INTO     email_profanity(    email_sent_log_id,
+                                                        filter_profanity_selected,
+                                                        subject_contains_profanity, 
+                                                        message_contains_profanity)
+                        VALUES (    :log_id,
+                                    :filter_profanity, 
+                                    :subject_contains_profanity,
+                                    :message_contains_profanity)
+                                    ''')
     
     # Streamlit's way of performing queries that write to a database
     with conn.session as session:
+       
         # Executes email_sent_log insert with values 
         email_sent_log_values = {
             'sender_email_id': SENDER_EMAIL_ID,
@@ -61,6 +78,7 @@ def sendToDb(email, subject, message, uploaded_file = None):
             'subject': subject,
             'message': message
             }
+        
         email_contents_values["log_id"] = log_id
         
         session.execute(email_contents_query, email_contents_values)
@@ -77,6 +95,18 @@ def sendToDb(email, subject, message, uploaded_file = None):
             email_attachments_values["log_id"] = log_id 
             
             session.execute(email_attachments_query, email_attachments_values)
+
+        # Executes email_profanity insert with values
+        email_profanity_values = {
+            'log_id': None,
+            'filter_profanity': filter_profanity,
+            'subject_contains_profanity': subject_contains_profanity,
+            'message_contains_profanity': message_contains_profanity
+        }
+
+        email_profanity_values["log_id"] = log_id
+
+        session.execute(email_profanity_query, email_profanity_values)
 
         # Commit
         session.commit()

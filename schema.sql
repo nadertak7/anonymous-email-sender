@@ -26,3 +26,14 @@ CREATE TABLE `email_attachments` (
   KEY `fk_email_sent_log_id` (`email_sent_log_id`),
   CONSTRAINT `fk_email_sent_log_id` FOREIGN KEY (`email_sent_log_id`) REFERENCES `email_sent_log` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `email_profanity` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `email_sent_log_id` int DEFAULT NULL,
+  `filter_profanity_selected` tinyint(1) DEFAULT NULL,
+  `subject_contains_profanity` tinyint(1) DEFAULT NULL,
+  `message_contains_profanity` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ibfk2_email_sent_log_id` (`email_sent_log_id`),
+  CONSTRAINT `ibfk2_email_sent_log_id` FOREIGN KEY (`email_sent_log_id`) REFERENCES `email_sent_log` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

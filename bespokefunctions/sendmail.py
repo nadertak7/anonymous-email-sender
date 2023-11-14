@@ -33,3 +33,4 @@ def sendMail(email, subject, message, uploaded_file = None):
     smtp.send_message(emailmessage)
     # Quit
     smtp.quit()
+    

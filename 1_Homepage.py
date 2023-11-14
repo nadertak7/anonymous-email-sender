@@ -11,7 +11,8 @@ from bespokefunctions import (  pagestyle as ps,
                                 sendmail as sm, 
                                 db, 
                                 checkfields as cf, 
-                                sessionstatecalcs as ssc
+                                sessionstatecalcs as ssc,
+                                filterprofanity as fp
                                 )
 
 # From bespokefunctions/hidestreamlitstyle.py
@@ -19,6 +20,7 @@ ps.stylePage()
 
 # Initialise Variables
 emailsent = False
+
 # Initialise Session State Variables from bespokefunctions/sessionstatecalcs.py
 ssc.initialiseSessionStates()
 
@@ -37,7 +39,14 @@ with st.container():
             email = st.text_input("Their Email Address: *", placeholder="Email Address", max_chars = 320)
             subject = st.text_input("Your Subject: *", placeholder = "Subject", max_chars = 70)
             message = st.text_area("Your Message: *", placeholder = "Message", max_chars = 3000)
-            uploaded_file = st.file_uploader("Attach a File", accept_multiple_files=True)
+            with st.container():
+                left_column, middle_column, right_column = st.columns([0.5, 0.2, 0.3])
+                with left_column:
+                    uploaded_file = st.file_uploader("Attach a File", accept_multiple_files=True)
+                with right_column:
+                    st.write('#')
+                    with st.expander("More Options"):
+                        filter_profanity = st.checkbox("Filter Profanity", value = False)
             submitted = st.form_submit_button("Send")
 
 # Below code is executed upon submission
@@ -45,8 +54,7 @@ with st.container():
 # Collects submitted timestamp for metrics
 if submitted: 
     submitted_timestamp = (datetime .now()
-                                    .strftime("%Y-%m-%d %H:%M:%S")
-                            )
+                                    .strftime("%Y-%m-%d %H:%M:%S"))
 
 with st.container():
     left_column, middle_column, right_column = st.columns([0.2, 0.4, 0.4])
@@ -60,10 +68,20 @@ with st.container():
         # Below block of code executes when all field rules are met
         elif submitted and cf.checkFields(email, subject, message) == True: 
             try:
+                (subject, 
+                message, 
+                subject_contains_profanity, 
+                message_contains_profanity) = fp.filterProfanity(subject, message, filter_profanity)
                 # From bespokefunctions/sendmail.py
                 sm.sendMail(email, subject, message, uploaded_file)
                 # From bespokefunctions/db.py
-                db.sendToDb(email, subject, message, uploaded_file) 
+                db.sendToDb(email, 
+                            subject, 
+                            message, 
+                            filter_profanity, 
+                            subject_contains_profanity, 
+                            message_contains_profanity,
+                            uploaded_file) 
                 # Triggers function ssc.calculateSessionStateVars below
                 emailsent = True
                 # Lets user know if code operations are successful or not
