@@ -35,11 +35,11 @@ To run the app locally:
    ```env
    SENDER_EMAIL_ID=your_email@gmail.com
    SENDER_PASSWORD=your_email_password
+  ```
 
 5. Set up schema
 
   After setting up a database connection, add the credentials into your [local app secrets](https://docs.streamlit.io/knowledge-base/tutorials/databases/mysql) and create the tables in [schema.sql](/schema.sql).
-   ```
 
 6. Run app:
 
