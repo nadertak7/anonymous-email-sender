@@ -74,37 +74,31 @@ def sendToDb(email,
 
         # Executes email_contents insert with values 
         email_contents_values = {
-            'log_id': None,
+            'log_id': log_id,
             'subject': subject,
             'message': message
             }
-        
-        email_contents_values["log_id"] = log_id
         
         session.execute(email_contents_query, email_contents_values)
 
         # Executes email_attachments insert with values
         for file in uploaded_file:
             email_attachments_values = {
-                'log_id': None, 
+                'log_id': log_id, 
                 'attachment_name': file.name,
                 'mime_type': file.type,
                 'attachment_size': file.size 
                 }
             
-            email_attachments_values["log_id"] = log_id 
-            
             session.execute(email_attachments_query, email_attachments_values)
 
         # Executes email_profanity insert with values
         email_profanity_values = {
-            'log_id': None,
+            'log_id': log_id,
             'filter_profanity': filter_profanity,
             'subject_contains_profanity': subject_contains_profanity,
             'message_contains_profanity': message_contains_profanity
         }
-
-        email_profanity_values["log_id"] = log_id
 
         session.execute(email_profanity_query, email_profanity_values)
 
