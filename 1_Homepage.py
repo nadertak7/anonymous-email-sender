@@ -118,7 +118,7 @@ with st.container():
         st.code(f"Average Message Length (Characters): {st.session_state["avg_message_char_len_session"]}")
         st.code(f"Attachments Sent: {st.session_state["attachment_count_session"]}")
         st.code(f"Average Attachment Size: {st.session_state["avg_attachment_size_mb_session"]} MB")
-        st.code(f"Profane Emails Censored: {st.session_state["emails_censored_count"]}")
+        st.code(f"Profane Emails Censored: {st.session_state["emails_censored_count_session"]} ({st.session_state["emails_censored_perc_session"]}%)")
     with right_column:
         st.markdown("##### Total usage statistics (Global)")
         # Fetches values from db queries in bespokefunctions/db.py

@@ -127,16 +127,20 @@ def readFromDb():
                                 FROM		email_attachments
                                   ''', ttl = 0)
     
-    # The below query be a lot more simpler and readable. But wanted to show some SQL skills! 
-    # COALESCE is also faster than IFNULL in a lot of cases, but benchmarking showed the same query cost in this case 
     emails_censored_count = conn.query('''
-                                SELECT 		COUNT(	IF(	    filter_profanity_selected = 1
-                                                    AND(	COALESCE(	IF(subject_contains_profanity = 1, 1, NULL),
-                                                                        IF(message_contains_profanity = 1, 1, 
-                                                                        NULL)))
-                                                            IS NOT NULL, 
-                                                    1, NULL)) emails_censored_count
-                                FROM 		email_profanity
+                                SELECT 		CONCAT(	censored_message_count,
+                                            ' (',
+                                            ROUND(100 * censored_message_count / total_email_count, 2),
+                                            '%)') censored_message_count
+                                FROM (		SELECT 		SUM(CASE 	WHEN filter_profanity_selected = 1
+                                                                    AND (subject_contains_profanity = 1
+                                                                    OR message_contains_profanity = 1)
+                                                                    THEN 1
+                                                                    ELSE 0
+                                                                    END) censored_message_count, 
+                                                        COUNT(*) total_email_count
+                                            FROM 		email_profanity) t
+
                                 ''', ttl = 0)
     
     # Post-Process Query Results
@@ -146,7 +150,7 @@ def readFromDb():
     avg_attachment_size_mb = round(attachment_info.iloc[0]["avg_attachment_size"] / 1024 ** 2, 2)
     avg_subject_length = round((avg_char_lengths.iloc[0]["subject_char_length"]), 2) 
     avg_message_length = round((avg_char_lengths.iloc[0]["message_char_length"]), 2)
-    emails_censored_count = int(emails_censored_count.values[0])
+    emails_censored_count = str(emails_censored_count.values[0])[2:-2]
 
     # Pack variables into tuple, to be unpacked in homepage
     return (send_count, 

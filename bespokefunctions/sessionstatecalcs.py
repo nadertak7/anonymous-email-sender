@@ -13,7 +13,8 @@ def initialiseSessionStates():
         "attachment_count_session": 0,
         "total_attachment_size_mb_session": 0,
         "avg_attachment_size_mb_session": 0,
-        "emails_censored_count": 0,
+        "emails_censored_count_session": 0,
+        "emails_censored_perc_session": 0,
     }
 
     for key, default_value in default_session_state.items():
@@ -54,7 +55,9 @@ def calculateSessionStateVars(subject,
 
     # Calculates number of emails censored 
     if filter_profanity and (subject_contains_profanity or message_contains_profanity):
-        st.session_state["emails_censored_count"] += 1
+        st.session_state["emails_censored_count_session"] += 1
+    
+    st.session_state["emails_censored_perc_session"] = round(st.session_state["emails_censored_count_session"] / st.session_state["submit_count_session"] * 100, 2)
 
     # Packs session states into tuple to be unpacked in homepage
     return(st.session_state["submit_count_session"], 
@@ -63,4 +66,5 @@ def calculateSessionStateVars(subject,
            st.session_state["avg_message_char_len_session"],
            st.session_state["attachment_count_session"],
            st.session_state["avg_attachment_size_mb_session"],
-           st.session_state["emails_censored_count"])
+           st.session_state["emails_censored_count_session"],
+           st.session_state["emails_censored_perc_session"])
