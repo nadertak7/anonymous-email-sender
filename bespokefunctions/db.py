@@ -116,11 +116,26 @@ def readFromDb():
                                         COALESCE(DATE_FORMAT(MAX(created_at), '%Y-%m-%d %T'), "None") last_message_sent
                             FROM        email_sent_log 
                             ''', ttl = 0)
+    
+    # Rounding has been manipulated in MySQL to imitate python's rounding
     avg_char_lengths = conn.query('''
-                                SELECT 		COALESCE(AVG(CHAR_LENGTH(TRIM(email_message))), 0) message_char_length,
-                                            COALESCE(AVG(CHAR_LENGTH(TRIM(email_subject))), 0) subject_char_length
-                                FROM		email_contents
+                                 SELECT 		CASE 	WHEN CHAR_LENGTH(message_char_length) = 1
+                                                        THEN message_char_length
+                                                        WHEN CHAR_LENGTH(message_char_length) = 3
+                                                        THEN ROUND(message_char_length, 1)
+                                                        ELSE ROUND(message_char_length, 2) 
+                                                END 	message_char_length,
+                                                CASE 	WHEN CHAR_LENGTH(subject_char_length) = 1
+                                                        THEN subject_char_length
+                                                        WHEN CHAR_LENGTH(subject_char_length) = 3
+                                                        THEN ROUND(subject_char_length, 1)
+                                                        ELSE ROUND(subject_char_length, 2) 
+                                                END 	subject_char_length
+                                FROM (		SELECT 		COALESCE(TRIM(0 FROM AVG(CHAR_LENGTH(TRIM(email_message)))), 0) message_char_length,
+                                                        COALESCE(TRIM(0 FROM AVG(CHAR_LENGTH(TRIM(email_subject)))), 0) subject_char_length
+											FROM		email_contents ) t
                                 ''', ttl = 0)
+    
     attachment_info = conn.query('''
                                 SELECT		COUNT(*) attachment_count,
                                             COALESCE(AVG(attachment_size_bytes), 0) avg_attachment_size
@@ -128,10 +143,10 @@ def readFromDb():
                                   ''', ttl = 0)
     
     emails_censored_count = conn.query('''
-                                SELECT 		CONCAT(	censored_message_count,
+                                SELECT 		COALESCE(CONCAT(	censored_message_count,
                                             ' (',
                                             ROUND(100 * censored_message_count / total_email_count, 2),
-                                            '%)') censored_message_count
+                                            '%)'), '0 (0%)') censored_message_count
                                 FROM (		SELECT 		SUM(CASE 	WHEN filter_profanity_selected = 1
                                                                     AND (subject_contains_profanity = 1
                                                                     OR message_contains_profanity = 1)
@@ -146,10 +161,10 @@ def readFromDb():
     # Post-Process Query Results
     send_count = send_info.iloc[0]["send_count"]
     last_message_sent = str(send_info.iloc[0]["last_message_sent"])
-    attachment_count = round((attachment_info.iloc[0]["attachment_count"]), 2)
+    attachment_count = int((attachment_info.iloc[0]["attachment_count"]))
     avg_attachment_size_mb = round(attachment_info.iloc[0]["avg_attachment_size"] / 1024 ** 2, 2)
-    avg_subject_length = round((avg_char_lengths.iloc[0]["subject_char_length"]), 2) 
-    avg_message_length = round((avg_char_lengths.iloc[0]["message_char_length"]), 2)
+    avg_subject_length = (avg_char_lengths.iloc[0]["subject_char_length"])
+    avg_message_length = (avg_char_lengths.iloc[0]["message_char_length"])
     emails_censored_count = str(emails_censored_count.values[0])[2:-2]
 
     # Pack variables into tuple, to be unpacked in homepage
