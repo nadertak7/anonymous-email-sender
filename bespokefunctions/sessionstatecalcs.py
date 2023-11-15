@@ -58,13 +58,3 @@ def calculateSessionStateVars(subject,
         st.session_state["emails_censored_count_session"] += 1
     
     st.session_state["emails_censored_perc_session"] = round(st.session_state["emails_censored_count_session"] / st.session_state["submit_count_session"] * 100, 2)
-
-    # Packs session states into tuple to be unpacked in homepage
-    return(st.session_state["submit_count_session"], 
-           st.session_state["last_submitted_timestamp"],
-           st.session_state["avg_subject_char_len_session"],
-           st.session_state["avg_message_char_len_session"],
-           st.session_state["attachment_count_session"],
-           st.session_state["avg_attachment_size_mb_session"],
-           st.session_state["emails_censored_count_session"],
-           st.session_state["emails_censored_perc_session"])

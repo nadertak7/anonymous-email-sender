@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 
 # Set config
-st.set_page_config(page_title = "Email Sender", page_icon = "closed-mailbox-with-raised-flag", layout = "wide")
+st.set_page_config(page_title = "Email Sender", layout = "wide")
 
 # Import Bespoke Modules from /bespokefunctions/
 from bespokefunctions import (pagestyle as ps, 
