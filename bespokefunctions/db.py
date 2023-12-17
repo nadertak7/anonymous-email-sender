@@ -112,7 +112,7 @@ def sendToDb(email,
 def readFromDb():
     # Database queries. Caching is disabled as queries are not costly. 
     send_info = conn.query(''' 
-                            SELECT      COUNT(*) send_count,
+                            SELECT      COUNT(0) send_count,
                                         COALESCE(DATE_FORMAT(MAX(created_at), '%Y-%m-%d %T'), "None") last_message_sent
                             FROM        email_sent_log 
                             ''', ttl = 0)
@@ -137,7 +137,7 @@ def readFromDb():
                                 ''', ttl = 0)
     
     attachment_info = conn.query('''
-                                SELECT		COUNT(*) attachment_count,
+                                SELECT		COUNT(0) attachment_count,
                                             COALESCE(AVG(attachment_size_bytes), 0) avg_attachment_size
                                 FROM		email_attachments
                                   ''', ttl = 0)
@@ -153,7 +153,7 @@ def readFromDb():
                                                                     THEN 1
                                                                     ELSE 0
                                                                     END) censored_message_count, 
-                                                        COUNT(*) total_email_count
+                                                        COUNT(0) total_email_count
                                             FROM 		email_profanity) t
 
                                 ''', ttl = 0)
